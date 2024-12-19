@@ -1,4 +1,5 @@
 def gv
+def env
 
 pipeline {
     agent any
