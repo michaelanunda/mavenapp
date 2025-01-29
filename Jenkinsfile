@@ -5,7 +5,7 @@ pipeline {
             steps {
                 script {
                     echo "Testing the application...."
-                    echo "Executing pipeline for branch ${BRANCH_NAME}"
+                    echo "Executing pipeline for branch ${env.BRANCH_NAME}"
                     echo "Testing webhook for GitHub repo mavenapp via its jenkins-jobs branch"
                 }
             }
