@@ -1,36 +1,54 @@
+def gv
 pipeline {
     agent any
+    tools {
+        maven 'maven-3.9'
+    }
     stages {
-        stage('test') {
+        stage('init') {
             steps {
                 script {
-                    echo "Testing the application...."
-                    echo "Executing pipeline for branch ${env.BRANCH_NAME}"
-                    echo "Testing webhook for GitHub repo mavenapp via its jenkins-jobs branch"
+                    gv = load "script.groovy"
                 }
             }
         }
-        stage('build') {
-            when {
-                    expression {
-                          env.BRANCH_NAME == "main"
-                    }
-                }
+       stage('increment version') {
             steps {
                 script {
-                    echo "Building the application...."
+                    echo 'incrementing app version...'
+                    sh 'mvn build-helper:parse-version versions:set \
+                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                        versions:commit'
+                    def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
+                    def version = matcher[0][1]
+                    env.IMAGE_NAME = "${version}-${env.BUILD_NUMBER}"
+                }
+            }
+        }
+        stage('build jar') {
+            steps {
+                script {
+                    echo 'building the application...'
+                    sh 'mvn clean package'
+                }
+            }
+        }
+        stage('build and push image') {
+            steps {
+                script {
+                    echo "building the docker image..."
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker build -t uba31/demo-app:${env.IMAGE_NAME} .'
+                        sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
+                        sh 'docker push uba31/demo-app:${env.IMAGE_NAME}'
+                    }
                 }
             }
         }
         stage('deploy') {
-            when {
-                    expression {
-                          env.BRANCH_NAME == "main"
-                    }
-                }
             steps {
                 script {
-                    echo "Deploying the application...."
+                    gv.deployApp()
                 }
             }
         }
