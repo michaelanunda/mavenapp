@@ -55,7 +55,7 @@ pipeline {
         stage('commit version update') {
             steps {
                 script {
-                withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USERNAME', passwordVariable: 'TOKEN')]) {
                     sh 'git config --global user.email "michaelanunda@gmail.com"'
                     //sh 'git config --global user.name "michaelanunda"'
 
@@ -66,7 +66,7 @@ pipeline {
                     //sh 'git remote set-url origin https://github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs'
                     sh 'git add .'
                     sh 'git commit -m "ci: version bump of pom.xml file to match Jenkins"'
-                    sh 'git push https:github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs'
+                    sh 'git push https://${USERNAME}:${TOKEN}@github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs'
                   } 
                 }
             }
