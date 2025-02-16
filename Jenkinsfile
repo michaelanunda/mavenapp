@@ -22,7 +22,6 @@ pipeline {
                     def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
                     def version = matcher[0][1]
                     env.IMAGE_NAME = "${version}-${env.BUILD_NUMBER}"
-                    echo IMAGE_NAME
                 }
             }
         }
@@ -50,6 +49,23 @@ pipeline {
             steps {
                 script {
                     gv.deployApp()
+                }
+            }
+        }
+        stage('commit version update') {
+            steps {
+                script {
+                    sh 'git config --global user.email "michaelanunda@gmail.com"'
+                    sh 'git config --global user.name "michaelanunda"'
+
+                    sh 'git status'
+                    sh 'git branch'
+                    sh 'git config --list'
+
+                    sh 'git remote set-url origin https://github.com/michaelanunda/mavenapp.git
+                    sh 'git add .'
+                    sh 'git commit -m "ci: version bump of pom.xml file to match Jenkins"'
+                    sh 'git push origin HEAD:jenkins-jobs'
                 }
             }
         }
