@@ -66,7 +66,7 @@ pipeline {
                     sh 'git remote set-url origin https://github.com/michaelanunda/mavenapp.git'
                     sh 'git add .'
                     sh 'git commit -m "ci: version bump of pom.xml file to match Jenkins"'
-                    sh 'git push https://${USERNAME}:${PASSWORD}@github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs'
+                    sh 'git push https:github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs'
                   } 
                 }
             }
