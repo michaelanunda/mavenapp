@@ -52,6 +52,31 @@ pipeline {
                 }
             }
         }
+
+
+stage('commit and push changes') {
+            steps {
+                script {
+                    echo 'Committing and pushing the changes to pom.xml...'
+                    
+                    // Configure Git with Jenkins credentials
+                    withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                        sh """
+                            git config user.name '${GITHUB_USER}'
+                            git config user.email '${GITHUB_USER}@users.noreply.github.com'
+                            git add .
+                            git commit -m "Incremented version to ${env.IMAGE_NAME}"
+                            git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs
+                        """
+                    }
+                }
+            }
+        }
+
+
+
+        
+        /*
         stage('commit version update') {
             steps {
                 script {
@@ -71,5 +96,6 @@ pipeline {
                 }
             }
         }
+        */
     }
 }
