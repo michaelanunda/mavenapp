@@ -33,6 +33,24 @@ pipeline {
                 }
             }
         }
+        stage('commit and push changes') {
+            steps {
+                script {
+                    echo 'Committing and pushing the changes to pom.xml...'
+                    
+                    // Configure Git with Jenkins credentials
+                    withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                        sh """
+                            git config user.name '${GITHUB_USER}'
+                            git config user.email '${GITHUB_USER}@users.noreply.github.com'
+                            git add .
+                            git commit -m "Incremented version to ${env.IMAGE_NAME}"
+                            git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs
+                        """
+                    }
+                }
+            }
+        }
         stage('build and push image') {
             steps {
                 script {
@@ -52,50 +70,5 @@ pipeline {
                 }
             }
         }
-
-
-stage('commit and push changes') {
-            steps {
-                script {
-                    echo 'Committing and pushing the changes to pom.xml...'
-                    
-                    // Configure Git with Jenkins credentials
-                    withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-                        sh """
-                            git config user.name '${GITHUB_USER}'
-                            git config user.email '${GITHUB_USER}@users.noreply.github.com'
-                            git add .
-                            git commit -m "Incremented version to ${env.IMAGE_NAME}"
-                            git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs
-                        """
-                    }
-                }
-            }
-        }
-
-
-
-        
-        /*
-        stage('commit version update') {
-            steps {
-                script {
-                withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USERNAME', passwordVariable: 'TOKEN')]) {
-                    sh 'git config --global user.email "michaelanunda@gmail.com"'
-                    //sh "git config --global user.name ${USERNAME}"
-
-                    sh 'git status'
-                    sh 'git branch'
-                    sh 'git config --list'
-
-                    sh "git remote set-url origin https://github.com/michaelanunda/mavenapp.git/"
-                    sh 'git add .'
-                    sh 'git commit -m "ci: version bump of pom.xml file to match Jenkins"'
-                    sh 'git push origin HEAD:jenkins-jobs'
-                  } 
-                }
-            }
-        }
-        */
     }
 }
