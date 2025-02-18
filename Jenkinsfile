@@ -57,7 +57,7 @@ pipeline {
 
 
 
-
+/*
         stage('commit and push changes') {
             steps {
                 script {
@@ -76,7 +76,7 @@ pipeline {
                 }
             }
         }
-
+*/
 
 
         
