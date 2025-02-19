@@ -52,8 +52,8 @@ pipeline {
                     // Configure Git with Jenkins credentials
                     withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                         sh """
-                            git config user.name 'Jenkins'
-                            git config user.email 'jenkins@example.com'
+                            git config --global user.name 'Jenkins'
+                            git config --global user.email 'jenkins@example.com'
                             git status
                             git branch
                             git config --list
