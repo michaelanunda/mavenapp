@@ -5,6 +5,21 @@ pipeline {
         maven 'maven-3.9'
     }
     stages {
+
+      stage('Check commit author') {
+            steps {
+                script {
+                    def commitAuthor = sh(script: 'git log -1 --pretty=format:"%an"', returnStdout: true).trim()
+                    if (commitAuthor == 'Jenkins') {
+                        currentBuild.result = 'ABORTED'
+                        error('Build triggered by Jenkins commit. Aborting to prevent loop.')
+                    }
+                }
+            }
+        }
+
+
+        
         stage('init') {
             steps {
                 script {
@@ -42,8 +57,8 @@ pipeline {
                     // Configure Git with Jenkins credentials
                     withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                         sh """
-                            git config user.name '${GITHUB_USER}'
-                            git config user.email '${GITHUB_USER}@users.noreply.github.com'
+                            git config user.name 'Jenkins'
+                            git config user.email 'jenkins@example.com'
                             git add .
                             git commit -m "Incremented version to ${env.IMAGE_NAME}"
                             git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs
