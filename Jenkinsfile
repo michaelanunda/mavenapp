@@ -5,7 +5,6 @@ pipeline {
         maven 'maven-3.9'
     }
     stages {
-
       stage('Check commit author') {
             steps {
                 script {
@@ -17,14 +16,14 @@ pipeline {
                 }
             }
         }
-        stage('init') {
+      stage('init') {
             steps {
                 script {
                     gv = load "script.groovy"
                 }
             }
         }
-       stage('increment version') {
+      stage('increment version') {
             steps {
                 script {
                     echo 'incrementing app version...'
@@ -37,7 +36,7 @@ pipeline {
                 }
             }
         }
-        stage('build jar') {
+      stage('build jar') {
             steps {
                 script {
                     echo 'building the application...'
@@ -45,8 +44,7 @@ pipeline {
                 }
             }
         }
-
-        stage('commit and push changes') {
+      stage('commit and push changes') {
             steps {
                 script {
                     echo 'Committing and pushing the changes to pom.xml...'
@@ -64,8 +62,7 @@ pipeline {
                 }
             }
         }
-
-        stage('build and push image') {
+      stage('build and push image') {
             steps {
                 script {
                     echo "building the docker image..."
@@ -77,22 +74,12 @@ pipeline {
                 }
             }
         }
-        stage('deploy') {
+      stage('deploy') {
             steps {
                 script {
                     gv.deployApp()
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-        
     }
 }
