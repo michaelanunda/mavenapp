@@ -54,6 +54,9 @@ pipeline {
                         sh """
                             git config user.name 'Jenkins'
                             git config user.email 'jenkins@example.com'
+                            git status
+                            git branch
+                            git config --list
                             git add .
                             git commit -m "Incremented version to ${env.IMAGE_NAME}"
                             git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/michaelanunda/mavenapp.git HEAD:jenkins-jobs
