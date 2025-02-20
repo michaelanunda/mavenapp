@@ -5,6 +5,7 @@ pipeline {
         maven 'maven-3.9'
     }
     stages {
+        /*
       stage('Check commit author') {
             steps {
                 script {
@@ -16,6 +17,7 @@ pipeline {
                 }
             }
         }
+        */
       stage('init') {
             steps {
                 script {
